@@ -437,7 +437,10 @@ def ParseQuarantines():
             for LSQuarantineEvent in LSQuarantineEvents:
                 JointLSQuarantineEvent = u""
                 for Q in LSQuarantineEvent:
-                    JointLSQuarantineEvent += u";" + unicode(Q)
+                    try:
+                        JointLSQuarantineEvent += u";" + unicode(Q)
+                    except UnicodeDecodeError, ude:
+                        print "Caught UnicodeDecodeError: {0}".format(ude.message)
                 PrintAndLog(JointLSQuarantineEvent[1:] + u"\n".decode("utf-8"), "INFO")
             DbConnection.close()
 
@@ -1003,7 +1006,7 @@ def ParseMailAppAccount(MailAccountPlistPath):
                     if "SSLEnabled" in MailAccount: MAccountPref += "SSLEnabled: " + MailAccount["SSLEnabled"] + " - "
                     if "Username" in MailAccount: MAccountPref += "Username: " + MailAccount["Username"]  + " - "
                     if "Hostname" in MailAccount: MAccountPref += "Hostname: " + MailAccount["Hostname"]  + " - "
-                    if "PortNumber" in MailAccount: MAccountPref += "(" + MailAccount["PortNumber"]  + ") - "
+                    if "PortNumber" in MailAccount: MAccountPref += "(" + str(MailAccount["PortNumber"])  + ") - "
                     if "SMTPIdentifier" in MailAccount: MAccountPref += "SMTPIdentifier: " + MailAccount["SMTPIdentifier"]  + " - "
                     if "EmailAddresses" in MailAccount:
                         for EmailAddresse in MailAccount["EmailAddresses"]:
@@ -1024,7 +1027,7 @@ def ParseMailAppAccount(MailAccountPlistPath):
                     if "SSLEnabled" in DeliveryAccount: DAccountPref += "SSLEnabled: " + DeliveryAccount["SSLEnabled"] + " - "
                     if "Username" in DeliveryAccount: DAccountPref += "Username: " + DeliveryAccount["Username"]  + " - "
                     if "Hostname" in DeliveryAccount: DAccountPref += "Hostname: " + DeliveryAccount["Hostname"]  + " - "
-                    if "PortNumber" in DeliveryAccount: DAccountPref += "(" + MailAccount["PortNumber"]  + ") - "
+                    if "PortNumber" in DeliveryAccount: DAccountPref += "(" + str(MailAccount["PortNumber"])  + ") - "
                     PrintAndLog(DAccountPref.decode("utf-8"), "INFO")
                 NbSmtpAccounts += 1
             if NbSmtpAccounts == 0:
